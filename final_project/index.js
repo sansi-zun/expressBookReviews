@@ -15,7 +15,7 @@ app.use("/customer", session({
     saveUninitialized: true
 }));
 
-app.use("/customer/auth/*", function auth(req, res, next){
+app.use("/customer/auth/*", (req, res, next) => {
     const auth = req.session.authorization;
     if (!auth) {
         return res.status(403).json({message: "user not logged in"});
