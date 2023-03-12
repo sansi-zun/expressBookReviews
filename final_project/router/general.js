@@ -123,7 +123,7 @@ public_users.get('/review/:isbn', function (req, res) {
     if (!book) {
         return res.status(404).json({ message: `no book with isbn ${isbn}` });
     }
-    res.send(book.review);
+    res.send(book.reviews);
 });
 
 module.exports.general = public_users;

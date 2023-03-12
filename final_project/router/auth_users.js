@@ -25,21 +25,21 @@ regd_users.post("/login", (req, res) => {
 
     const accessToken = jwt.sign({
         data: password
-    }, "access", { expiredIn: 60 * 60});
+    }, "access", { expiresIn: 60 * 60});
     req.session.authorization = {accessToken, username};
 
     res.send(`user ${username} successfully logged in`);
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn/:review", (req, res) => {
+regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const book = books[isbn];
     if (!book) {
         return res.status(404).json({ message: `no book with isbn ${isbn}` });
     }
 
-    book.review[req.user] = req.params.review;
+    book.reviews[req.session.authorization.username] = req.body.review;
     res.send("review successfully added or modified");
 });
 
@@ -50,7 +50,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
         return res.status(404).json({ message: `no book with isbn ${isbn}` });
     }
 
-    delete book[req.user];
+    delete book.reviews[req.session.authorization.username];
     res.send(`review successfully deleted`);
 });
 
