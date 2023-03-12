@@ -1,13 +1,23 @@
 const express = require('express');
-let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
-let users = require("./auth_users.js").users;
+const books = require("./booksdb.js");
+const isValid = require("./auth_users.js").isValid;
+const users = require("./auth_users.js").users;
 
 const public_users = express.Router();
 
 public_users.post("/register", (req, res) => {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const username = req.body.username;
+    const password = req.body.password;
+
+    if (!username || !password) {
+        return res.status(406).json({message: "unable to register user"});
+    }
+    else if (isValid(username)) {
+        return res.status(406).json({message: "user is already registered"});
+    }
+
+    users.push({username, password});
+    res.send({ message: `user ${username} successfully registered` });
 });
 
 // Get the book list available in the shop
@@ -51,8 +61,12 @@ public_users.get('/title/:title', (req, res) => {
 
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const isbn = req.params.isbn;
+    const book = books[isbn];
+    if (!book) {
+        return res.status(404).json({ message: `no book with isbn ${isbn}` });
+    }
+    res.send(book.review);
 });
 
 module.exports.general = public_users;
